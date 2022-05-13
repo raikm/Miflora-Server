@@ -17,5 +17,7 @@ export class MiFloraRoutes {
       '/findNewSensors',
       this.controller.getNonConnectedBluetoothSensors
     )
+    // http://localhost:6006/api/v1/miflora/blink/:address
+    this.router.get('/blink/:address', this.controller.sendBlink)
   }
 }

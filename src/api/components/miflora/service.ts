@@ -6,13 +6,13 @@ import { MiFloraDevice, PlantData } from '../../../../types/miflora'
 export class MiFloraService {
   readonly Duration = 30000
 
-  async search(): Promise<MiFloraDevice[]> {
+  async search(intervall: number): Promise<MiFloraDevice[]> {
     const devices = (await miflora.discover()) as MiFloraDevice[]
     return devices
   }
 
   public async getNonConnectedBluetoothDevices() {
-    const nearbyBluetoothDevices = await this.search()
+    const nearbyBluetoothDevices = await this.search(1)
     const initializedDevices = (
       await axios.get('http://192.168.1.217:8080/getAllPlants/?format=json')
     ).data as PlantData[]
@@ -21,12 +21,18 @@ export class MiFloraService {
 
     nearbyBluetoothDevices.forEach((device) => {
       if (
-        !initializedDevices.find((plant) => (plant.address = device.address))
+        initializedDevices.find(
+          (plant) =>
+            plant.address.toLocaleUpperCase() ===
+            device.address.toLocaleUpperCase()
+        ) === undefined
       ) {
         newDevices.push(device)
       }
     })
-    return newDevices
+    console.table(initializedDevices)
+    console.log(newDevices.map((d) => d.address))
+    return newDevices.map((d) => d.address.toLocaleUpperCase())
   }
 
   public async blink(address: string) {

@@ -14,6 +14,7 @@ export class MiFloraController {
 
   async sendBlink(req: Request, res: Response): Promise<Response> {
     const service = new MiFloraService()
+    console.log('send blink to: ' + req.params.address)
     service.blink(req.params.address)
 
     return res.status(200).json('bliniking')
